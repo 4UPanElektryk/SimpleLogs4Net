@@ -2,6 +2,12 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <Description>Simple logging Library For .Net</Description>
+    <Authors>4UPanElektryk</Authors>
+    <RepositoryUrl>https://github.com/4UPanElektryk/SimpleLogs4Net</RepositoryUrl>
+    <PackageTags>Logger;Log;SimpleLogger;SimpleLog;Logs;SimpleLogs;</PackageTags>
+    <PackageReleaseNotes>Relesed Logs4Net</PackageReleaseNotes>
+    <NeutralLanguage>en-GB</NeutralLanguage>
   </PropertyGroup>
 
 </Project>
