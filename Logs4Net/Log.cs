@@ -142,22 +142,21 @@ namespace SimpleLogs4Net
 			switch (logEvent._Type)
 			{
 				case Event.Type.Normal:
-					s = s + "[NORMAL]" + "|";
+					s += "[NORMAL]";
 					break;
 				case Event.Type.Informtion:
-					s = s + "[INFO]" + "|";
+					s += "[INFO]";
 					break;
 				case Event.Type.Warrning:
-					s = s + "[WARRNING]" + "|";
+					s += "[WARRNING]";
 					break;
 				case Event.Type.Error:
-					s = s + "[ERROR]" + "|";
+					s += "[ERROR]";
 					break;
 				case Event.Type.Critical_Error:
-					s = s + "[CRITICAL_ERROR]" + "|";
+					s += "[CRITICAL_ERROR]";
 					break;
 			}
-			s = s + "|";
 			s = s + logEvent._Text;
 			return s;
 		}
