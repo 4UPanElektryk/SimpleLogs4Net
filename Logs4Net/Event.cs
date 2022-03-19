@@ -12,7 +12,7 @@ namespace SimpleLogs4Net
 			Informtion,
 			Warrning,
 			Error,
-			Critical_Error,
+			Critical_Error
 		}
 		public Event(string text, Type type, DateTime dateTime)
 		{

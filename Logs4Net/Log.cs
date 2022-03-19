@@ -132,31 +132,29 @@ namespace SimpleLogs4Net
 		}
 		public static string EventToString(Event logEvent)
 		{
-			string s = "";
-			s = logEvent._DateTime.Day.ToString() + "."
+			string s = "[";
+			s = s + logEvent._DateTime.Day.ToString() + "."
 				+ logEvent._DateTime.Month.ToString() + "."
 				+ logEvent._DateTime.Year.ToString() + "-"
 				+ logEvent._DateTime.Hour.ToString() + ":"
 				+ logEvent._DateTime.Minute.ToString() + ":"
-				+ logEvent._DateTime.Second.ToString() + "|";
+				+ logEvent._DateTime.Second.ToString() + "]";
 			switch (logEvent._Type)
 			{
 				case Event.Type.Normal:
-					s = s + "{[NORMAL]}" + "|";
+					s = s + "[NORMAL]" + "|";
 					break;
 				case Event.Type.Informtion:
-					s = s + "{[INFO]}" + "|";
+					s = s + "[INFO]" + "|";
 					break;
 				case Event.Type.Warrning:
-					s = s + "{[WARRNING]}" + "|";
+					s = s + "[WARRNING]" + "|";
 					break;
 				case Event.Type.Error:
-					s = s + "{[ERROR]}" + "|";
+					s = s + "[ERROR]" + "|";
 					break;
 				case Event.Type.Critical_Error:
-					s = s + "{[CRITICAL_ERROR]}" + "|";
-					break;
-				default:
+					s = s + "[CRITICAL_ERROR]" + "|";
 					break;
 			}
 			s = s + "|";
