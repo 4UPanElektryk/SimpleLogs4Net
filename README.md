@@ -1,2 +1,2 @@
 # SimpleLogs4Net
-Simple Logs Library for .Net
+Simple Logs Library for C# .Net Framework
