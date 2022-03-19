@@ -27,7 +27,7 @@ Syntax highlighted code block
 ```
 
 # Usage
-First you need to add to Initialize 
+First you need to add Initialize 
 ```cs
 Log log = new Log("Directory where you want to store logs");
 ```
