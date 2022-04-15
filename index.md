@@ -7,6 +7,7 @@ Example of Usage
 ```cs
 using System;
 using SimpleLogs4Net;
+
 namespace SimpleLogs4Net.Tests
 {
     internal class Program
