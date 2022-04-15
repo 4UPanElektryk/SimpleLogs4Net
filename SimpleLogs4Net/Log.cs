@@ -8,7 +8,8 @@ namespace SimpleLogs4Net
 		private static bool _Enabled;
 		private static string _LastFile;
 		private static string _Prefix = "LOG";
-		public Log(string path, bool enabled, string prefix)
+        private static int _Index = 0;
+        public Log(string path, bool enabled, string prefix)
 		{
 			if (!Directory.Exists(path))
 			{
@@ -96,7 +97,7 @@ namespace SimpleLogs4Net
 						plu[i] = item;
 						i++;
 					}
-					plu[u - 1] = EventToString(logEvent);
+					plu[u - 1] = EventToString(logEvent,_Index);
 					StreamWriter writer = new StreamWriter(@_LastFile);
 					foreach (string item in plu)
 					{
@@ -113,7 +114,7 @@ namespace SimpleLogs4Net
 						i++;
 					} while (File.Exists(@_LastFile));
 					StreamWriter writer = new StreamWriter(@_LastFile);
-					writer.WriteLine(EventToString(logEvent));
+					writer.WriteLine(EventToString(logEvent,_Index));
 					writer.Close();
 				}
 			}
@@ -129,7 +130,8 @@ namespace SimpleLogs4Net
 				writer.WriteLine(EventToString(logEvent));
 				writer.Close();
 			}
-		}
+            _Index = File.ReadAllLines(@_LastFile).Length;
+        }
 		public static string EventToString(Event logEvent)
 		{
 			string s = "[";
@@ -170,6 +172,50 @@ namespace SimpleLogs4Net
 			}
             else
             {
+				s = s + logEvent._Text;
+			}
+			return s;
+		}
+		public static string EventToString(Event logEvent, int startindex)
+		{
+			string s = "[";
+			s = s + logEvent._DateTime.Day.ToString() + "."
+				+ logEvent._DateTime.Month.ToString() + "."
+				+ logEvent._DateTime.Year.ToString() + "-"
+				+ logEvent._DateTime.Hour.ToString() + ":"
+				+ logEvent._DateTime.Minute.ToString() + ":"
+				+ logEvent._DateTime.Second.ToString() + "]";
+			switch (logEvent._Type)
+			{
+				case Event.Type.Normal:
+					s += "[NORMAL]";
+					break;
+				case Event.Type.Informtion:
+					s += "[INFO]";
+					break;
+				case Event.Type.Warrning:
+					s += "[WARRNING]";
+					break;
+				case Event.Type.Error:
+					s += "[ERROR]";
+					break;
+				case Event.Type.Critical_Error:
+					s += "[CRITICAL_ERROR]";
+					break;
+			}
+			if (logEvent._IsMultiLine)
+			{
+				s = s + "[MULTILINE]["+ (_Index + 3) +"]["+ (_Index + 2 + logEvent._MultiineText.Length) + "]\r\n";
+				s = s + "{\r\n";
+				foreach (string item in logEvent._MultiineText)
+				{
+					s = s + item + "\r\n";
+				}
+				s = s + "}";
+				s = s + logEvent._Text;
+			}
+			else
+			{
 				s = s + logEvent._Text;
 			}
 			return s;

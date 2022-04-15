@@ -8,6 +8,8 @@
     <PackageTags>Logger;Log;SimpleLogger;SimpleLog;Logs;SimpleLogs;</PackageTags>
     <PackageReleaseNotes>Relesed Logs4Net</PackageReleaseNotes>
     <NeutralLanguage>en-GB</NeutralLanguage>
+    <Version>1.1</Version>
+    <PackageProjectUrl>https://4upanelektryk.github.io/SimpleLogs4Net/</PackageProjectUrl>
   </PropertyGroup>
 
 </Project>
