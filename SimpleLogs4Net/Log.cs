@@ -157,7 +157,21 @@ namespace SimpleLogs4Net
 					s += "[CRITICAL_ERROR]";
 					break;
 			}
-			s = s + logEvent._Text;
+            if (logEvent._IsMultiLine)
+            {
+				s = s + "[MULTILINE]\r\n";
+				s = s + "{\r\n";
+                foreach (string item in logEvent._MultiineText)
+                {
+                    s = s + item + "\r\n";
+                }
+                s = s + "}";
+                s = s + logEvent._Text;
+			}
+            else
+            {
+				s = s + logEvent._Text;
+			}
 			return s;
 		}
 		public static void ClearLogs()

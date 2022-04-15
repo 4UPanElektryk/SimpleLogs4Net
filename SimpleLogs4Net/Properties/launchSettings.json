@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "SimpleLogs4Net": {
+      "commandName": "Project",
+      "commandLineArgs": "start SimpleLogs4Net.Tests.exe"
+    }
+  }
+}
