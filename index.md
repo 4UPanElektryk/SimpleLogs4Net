@@ -29,7 +29,7 @@ namespace SimpleLogs4Net.Tests
                 		"text5",
             		};
 			Log.AddEvent(new Event(lines, Event.Type.Critical_Error));
-        }
+        	}
 	}
 }
 ```
