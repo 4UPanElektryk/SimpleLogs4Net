@@ -22,12 +22,12 @@ namespace SimpleLogs4Net.Tests
 			Log.AddEvent(new Event("text", Event.Type.Critical_Error));
 			string[] lines = 
 			{
-                "text1",
-                "text2",
-                "text3",
-                "text4",
-                "text5",
-            };
+                		"text1",
+                		"text2",
+                		"text3",
+                		"text4",
+                		"text5",
+            		};
 			Log.AddEvent(new Event(lines, Event.Type.Critical_Error));
         }
 	}
