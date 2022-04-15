@@ -6,7 +6,7 @@ Log log = new Log("Directory where you want to store logs");
 Example of Usage
 ```cs
 using System;
-
+using SimpleLogs4Net;
 namespace SimpleLogs4Net.Tests
 {
     internal class Program
@@ -23,4 +23,21 @@ namespace SimpleLogs4Net.Tests
         }
     }
 }
+```
+What Logs Look like
+```text
+[15.4.2022-7:39:45][NORMAL]text
+[15.4.2022-7:39:45][INFO]text
+[15.4.2022-7:39:45][WARRNING]text
+[15.4.2022-7:39:45][ERROR]text
+[15.4.2022-7:39:45][CRITICAL_ERROR]text
+[15.4.2022-7:39:45][CRITICAL_ERROR][MULTILINE][8][12]
+{
+text1
+text2
+text3
+text4
+text5
+}
+
 ```
