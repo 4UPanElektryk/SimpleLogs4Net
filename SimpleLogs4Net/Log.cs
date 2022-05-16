@@ -9,6 +9,7 @@ namespace SimpleLogs4Net
 		private static string _LastFile;
 		private static string _Prefix = "LOG";
         private static int _Index = 0;
+        private static Event.Type _DefaultType = Event.Type.Normal;
         public Log(string path, bool enabled, string prefix)
 		{
 			if (!Directory.Exists(path))
@@ -76,9 +77,45 @@ namespace SimpleLogs4Net
 			_Path = path;
 			_Enabled = true;
 		}
-		public static void ChangeEnable(bool enabled)
+        public static void Initialize(string path)
+        {
+            new Log(path);
+        }
+        public static void Initialize(string path, string prefix)
+        {
+            new Log(path, prefix);
+        }
+        public static void Initialize(string path, bool enabled)
+        {
+            new Log(path, enabled);
+        }
+        public static void Initialize(string path, bool enabled, string prefix)
+        {
+            new Log(path, enabled, prefix);
+        }
+        public static void ChangeDefaultType(Event.Type type)
+        {
+            _DefaultType = type;
+        }
+        public static void ChangeEnable(bool enabled)
 		{
 			_Enabled = enabled;
+		}
+        public static void Write(string text)
+        {
+            AddEvent(new Event(text,_DefaultType));
+        }
+		public static void Write(string text, Event.Type type)
+		{
+			AddEvent(new Event(text, type));
+		}
+		public static void Write(string[] text)
+		{
+			AddEvent(new Event(text, _DefaultType));
+		}
+		public static void Write(string[] text, Event.Type type)
+		{
+			AddEvent(new Event(text, type));
 		}
 		public static void AddEvent(Event logEvent)
 		{
@@ -134,13 +171,7 @@ namespace SimpleLogs4Net
         }
 		public static string EventToString(Event logEvent)
 		{
-			string s = "[";
-			s = s + logEvent._DateTime.Day.ToString() + "."
-				+ logEvent._DateTime.Month.ToString() + "."
-				+ logEvent._DateTime.Year.ToString() + "-"
-				+ logEvent._DateTime.Hour.ToString() + ":"
-				+ logEvent._DateTime.Minute.ToString() + ":"
-				+ logEvent._DateTime.Second.ToString() + "]";
+			string s = logEvent._DateTime.ToString("[dd.MM.yyyy-HH:mm:ss]");
 			switch (logEvent._Type)
 			{
 				case Event.Type.Normal:
@@ -149,8 +180,8 @@ namespace SimpleLogs4Net
 				case Event.Type.Informtion:
 					s += "[INFO]";
 					break;
-				case Event.Type.Warrning:
-					s += "[WARRNING]";
+				case Event.Type.Warning:
+					s += "[WARNING]";
 					break;
 				case Event.Type.Error:
 					s += "[ERROR]";
@@ -178,13 +209,7 @@ namespace SimpleLogs4Net
 		}
 		public static string EventToString(Event logEvent, int startindex)
 		{
-			string s = "[";
-			s = s + logEvent._DateTime.Day.ToString() + "."
-				+ logEvent._DateTime.Month.ToString() + "."
-				+ logEvent._DateTime.Year.ToString() + "-"
-				+ logEvent._DateTime.Hour.ToString() + ":"
-				+ logEvent._DateTime.Minute.ToString() + ":"
-				+ logEvent._DateTime.Second.ToString() + "]";
+			string s = logEvent._DateTime.ToString("[dd.MM.yyyy-HH:mm:ss]");
 			switch (logEvent._Type)
 			{
 				case Event.Type.Normal:
@@ -193,8 +218,8 @@ namespace SimpleLogs4Net
 				case Event.Type.Informtion:
 					s += "[INFO]";
 					break;
-				case Event.Type.Warrning:
-					s += "[WARRNING]";
+				case Event.Type.Warning:
+					s += "[WARNING]";
 					break;
 				case Event.Type.Error:
 					s += "[ERROR]";

@@ -12,7 +12,7 @@ namespace SimpleLogs4Net
 		{
 			Normal,
 			Informtion,
-			Warrning,
+			Warning,
 			Error,
 			Critical_Error
 		}
