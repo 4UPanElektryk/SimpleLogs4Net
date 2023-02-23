@@ -2,140 +2,32 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
+using System.Reflection;
+
 namespace SimpleLogs4Net
 {
 	public class Log
 	{
-		private static string _Dir;
-		public static bool _FileOutputEnabled;
-		public static bool _ConsoleOutputEnabled;
-		private static string _LastFile;
-		public static string _Prefix = "LOG";
-        private static int _Index = 0;
-        public static EType _DefaultType = EType.Normal;
-		private static void InitStream(OutputStream stream)
-		{
-			switch (stream)
-			{
-				case OutputStream.None:
-					_FileOutputEnabled = false;
-					_ConsoleOutputEnabled = false;
-					break;
-				case OutputStream.Console:
-					_FileOutputEnabled = false;
-					_ConsoleOutputEnabled = true;
-					break;
-				case OutputStream.File:
-					_FileOutputEnabled = true;
-					_ConsoleOutputEnabled = false;
-					break;
-				case OutputStream.Both:
-					_FileOutputEnabled = true;
-					_ConsoleOutputEnabled = true;
-					break;
-				default:
-					break;
-			}
-		}
-        public Log(string dir, OutputStream stream, string prefix)
-		{
-			if (!Directory.Exists(dir))
-			{
-				try
-				{
-					Directory.CreateDirectory(dir);
-				}
-				catch
-				{
-					throw new FileNotFoundException("Directory Not Found", dir);
-				}
-			}
-			_Dir = dir;
-			InitStream(stream);
-			_Prefix = prefix;
-		}
-		public Log(string dir, OutputStream stream)
-		{
-			if (!Directory.Exists(dir))
-			{
-				try
-				{
-					Directory.CreateDirectory(dir);
-				}
-				catch
-				{
-					throw new FileNotFoundException("Directory Not Found", dir);
-				}
-			}
-			_Dir = dir;
-			InitStream(stream);
-		}
-		public Log(string dir,string prefix)
-		{
-			if (!Directory.Exists(dir))
-			{
-				try
-				{
-					Directory.CreateDirectory(dir);
-				}
-				catch
-				{
-					throw new FileNotFoundException("Directory Not Found", dir);
-				}
-				
-			}
-			_Dir = dir;
-			_FileOutputEnabled = true;
-			_Prefix = prefix;
-		}
-		public Log(string dir)
-		{
-			if (!Directory.Exists(dir))
-			{
-				try
-				{
-					Directory.CreateDirectory(dir);
-				}
-				catch
-				{
-					throw new FileNotFoundException("Directory Not Found", dir);
-				}
-			}
-			_Dir = dir;
-			_FileOutputEnabled = true;
-		}
+		private static string _CurrentFile;
         public static void Initialize(string path)
         {
             new Log(path);
         }
-        public static void Initialize(string path, string prefix)
-        {
-            new Log(path, prefix);
-        }
-        public static void Initialize(string path, OutputStream stream)
-        {
-            new Log(path, stream);
-        }
-        public static void Initialize(string path, OutputStream stream, string prefix)
-        {
-            new Log(path, stream, prefix);
-        }
 		public static void NextLog() 
 		{
-			_LastFile = null;
-			_Index = 0;
+			_CurrentFile = null;
 		}
         public static void ChangeDefaultType(EType type)
         {
-            _DefaultType = type;
+            LogConfiguration._DefaultType = type;
         }
         public static void ChangeOutputStream(OutputStream stream)
 		{
-			InitStream(stream);
+			Initializer.InitStream(stream);
 		}
         public static void Write(string text)
         {
-            AddEvent(new Event(text,_DefaultType));
+            AddEvent(new Event(text,LogConfiguration._DefaultType));
         }
 		public static void Write(string text, EType type)
 		{
@@ -143,7 +35,7 @@ namespace SimpleLogs4Net
 		}
 		public static void Write(string[] text)
 		{
-			AddEvent(new Event(text, _DefaultType));
+			AddEvent(new Event(text, LogConfiguration._DefaultType));
 		}
 		public static void Write(string[] text, EType type)
 		{
@@ -151,10 +43,10 @@ namespace SimpleLogs4Net
 		}
 		public static void AddEvent(Event logEvent)
 		{
-			if (!_FileOutputEnabled && !_ConsoleOutputEnabled)
+			if (!LogConfiguration._FileOutputEnabled && !LogConfiguration._ConsoleOutputEnabled)
 				return;
             #region Console Output
-            if (_ConsoleOutputEnabled)
+            if (LogConfiguration._ConsoleOutputEnabled)
 			{
 				Console.ResetColor();
 				Console.Write("[");
@@ -208,14 +100,16 @@ namespace SimpleLogs4Net
 				Console.ResetColor();
 			}
 #endregion
-            if (!_FileOutputEnabled)
+            if (!LogConfiguration._FileOutputEnabled)
 				return;
             #region File Output
-            if (@_LastFile != null)
+            if (_CurrentFile != null)
 			{
-				if (File.Exists(@_LastFile))
+				if (File.Exists(_CurrentFile))
 				{
-					string[] pl = File.ReadAllLines(@_LastFile);
+					File.WriteAllText(_CurrentFile,File.ReadAllText(_CurrentFile) + EventToString(logEvent));
+                    //TODO: Rewrite this garbage into something more readabile
+                    string[] pl = File.ReadAllLines(_CurrentFile);
 					int u = pl.Length + 1;
 					string[] plu = new string[u];
 					int i = 0;
@@ -224,8 +118,8 @@ namespace SimpleLogs4Net
 						plu[i] = item;
 						i++;
 					}
-					plu[u - 1] = EventToString(logEvent,_Index);
-					StreamWriter writer = new StreamWriter(@_LastFile);
+					plu[u - 1] = EventToString(logEvent);
+					StreamWriter writer = new StreamWriter(_CurrentFile);
 					foreach (string item in plu)
 					{
 						writer.WriteLine(item);
@@ -234,111 +128,73 @@ namespace SimpleLogs4Net
 				}
 				else
 				{
-					int i = 1;
-					do
-					{
-						_LastFile = _Dir + _Prefix + i.ToString() + ".log";
-						i++;
-					} while (File.Exists(@_LastFile));
-					StreamWriter writer = new StreamWriter(@_LastFile);
-					writer.WriteLine(EventToString(logEvent,_Index));
-					writer.Close();
+					FindNewFile();
+                    File.WriteAllText(_CurrentFile, EventToString(logEvent));
 				}
 			}
 			else
 			{
-				int i = 1;
-				do
-				{
-					_LastFile = _Dir + _Prefix + i.ToString() + ".log";
-					i++;
-				} while (File.Exists(@_LastFile));
-				StreamWriter writer = new StreamWriter(@_LastFile);
-				writer.WriteLine(EventToString(logEvent));
-				writer.Close();
-			}
-            _Index = File.ReadAllLines(@_LastFile).Length;
+                FindNewFile();
+                File.WriteAllText(_CurrentFile, EventToString(logEvent));
+            }
             #endregion
+        }
+		private static void FindNewFile()
+		{
+            int i = 1;
+            do
+            {
+                _CurrentFile = LogConfiguration._Dir + LogConfiguration._Prefix + i.ToString() + ".log";
+                i++;
+            } while (File.Exists(_CurrentFile));
         }
         public static string EventToString(Event logEvent)
 		{
-			string s = logEvent._DateTime.ToString("[dd.MM.yyyy-HH:mm:ss]");
+			string date = logEvent._DateTime.ToString("dd.MM.yyyy");
+			string time = logEvent._DateTime.ToString("HH:mm:ss");
+			string type = "";
 			switch (logEvent._Type)
 			{
 				case EType.Normal:
-					s += "[NORMAL]";
+					type = "NORMAL";
 					break;
 				case EType.Informtion:
-					s += "[INFO]";
+					type = "INFO";
 					break;
 				case EType.Warning:
-					s += "[WARNING]";
+					type = "WARNING";
 					break;
 				case EType.Error:
-					s += "[ERROR]";
+					type = "ERROR";
 					break;
 				case EType.Critical_Error:
-					s += "[CRITICAL_ERROR]";
+					type = "CRITICAL_ERROR";
 					break;
 			}
+			string output = LogConfiguration._LogFormatting;
+			output = output.Replace("$date", date);
+			output = output.Replace("$time", time);
+			output = output.Replace("$type", type);
             if (logEvent._IsMultiLine)
             {
-				s = s + "[MULTILINE]\r\n";
-				s = s + "{\r\n";
+				string s = "[MULTILINE]\r\n";
+				s += "{\r\n";
                 foreach (string item in logEvent._MultiineText)
                 {
-                    s = s + item + "\r\n";
+                    s += item + "\r\n";
                 }
-                s = s + "}";
-                s = s + logEvent._Text;
-			}
+                s += "}\r\n";
+                output = output.Replace("$msg", s);
+            }
             else
             {
-				s = s + logEvent._Text;
+				output = output.Replace("$msg",logEvent._Text);
 			}
-			return s;
-		}
-		public static string EventToString(Event logEvent, int startindex)
-		{
-			string s = logEvent._DateTime.ToString("[dd.MM.yyyy-HH:mm:ss]");
-			switch (logEvent._Type)
-			{
-				case EType.Normal:
-					s += "[NORMAL]";
-					break;
-				case EType.Informtion:
-					s += "[INFO]";
-					break;
-				case EType.Warning:
-					s += "[WARNING]";
-					break;
-				case EType.Error:
-					s += "[ERROR]";
-					break;
-				case EType.Critical_Error:
-					s += "[CRITICAL_ERROR]";
-					break;
-			}
-			if (logEvent._IsMultiLine)
-			{
-				s = s + "[MULTILINE]["+ (_Index + 3) +"]["+ (_Index + 2 + logEvent._MultiineText.Length) + "]\r\n";
-				s = s + "{\r\n";
-				foreach (string item in logEvent._MultiineText)
-				{
-					s = s + item + "\r\n";
-				}
-				s = s + "}";
-				s = s + logEvent._Text;
-			}
-			else
-			{
-				s = s + logEvent._Text;
-			}
-			return s;
+            return output;
 		}
 		public static void ClearLogs()
 		{
-            foreach (string item in Directory.GetFiles(_Dir))
+            foreach (string item in Directory.GetFiles(LogConfiguration._Dir))
             {
                 if (item.EndsWith(".log"))
                 {
