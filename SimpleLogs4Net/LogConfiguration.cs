@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Runtime.InteropServices.ComTypes;
 using System.Text;
 
 namespace SimpleLogs4Net
@@ -13,8 +14,11 @@ namespace SimpleLogs4Net
         internal static string _Prefix;
         internal static string _LogFormatting;
         internal static EType _DefaultType = EType.Normal;
-
-        public LogConfiguration(string dir, OutputStream stream, string prefix = "LOG", string logformatting = "[$date-$time][$type]$msg"
+        public LogConfiguration()
+        {
+            Initializer.InitStream(OutputStream.Console);
+        }
+        public LogConfiguration(string dir, OutputStream stream, string prefix = "LOG", string logformatting = "[$date-$time][$type]$msg")
         {
             _Dir = dir;
             _Prefix = prefix;

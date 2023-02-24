@@ -1,18 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.IO;
-using System.Reflection;
+using System.Reflection.Emit;
 
 namespace SimpleLogs4Net
 {
 	public class Log
 	{
 		private static string _CurrentFile;
-        public static void Initialize(string path)
-        {
-            new Log(path);
-        }
 		public static void NextLog() 
 		{
 			_CurrentFile = null;
@@ -108,23 +103,6 @@ namespace SimpleLogs4Net
 				if (File.Exists(_CurrentFile))
 				{
 					File.WriteAllText(_CurrentFile,File.ReadAllText(_CurrentFile) + EventToString(logEvent));
-                    //TODO: Rewrite this garbage into something more readabile
-                    string[] pl = File.ReadAllLines(_CurrentFile);
-					int u = pl.Length + 1;
-					string[] plu = new string[u];
-					int i = 0;
-					foreach (string item in pl)
-					{
-						plu[i] = item;
-						i++;
-					}
-					plu[u - 1] = EventToString(logEvent);
-					StreamWriter writer = new StreamWriter(_CurrentFile);
-					foreach (string item in plu)
-					{
-						writer.WriteLine(item);
-					}
-					writer.Close();
 				}
 				else
 				{
@@ -139,7 +117,7 @@ namespace SimpleLogs4Net
             }
             #endregion
         }
-		private static void FindNewFile()
+		internal static void FindNewFile()
 		{
             int i = 1;
             do
@@ -147,6 +125,52 @@ namespace SimpleLogs4Net
                 _CurrentFile = LogConfiguration._Dir + LogConfiguration._Prefix + i.ToString() + ".log";
                 i++;
             } while (File.Exists(_CurrentFile));
+        }
+        internal static string EventToString(Event logEvent, string trace)
+        {
+            string date = logEvent._DateTime.ToString("dd.MM.yyyy");
+            string time = logEvent._DateTime.ToString("HH:mm:ss");
+            string type = "";
+            //string trace = Environment.StackTrace;
+            switch (logEvent._Type)
+            {
+                case EType.Normal:
+                    type = "NORMAL";
+                    break;
+                case EType.Informtion:
+                    type = "INFO";
+                    break;
+                case EType.Warning:
+                    type = "WARNING";
+                    break;
+                case EType.Error:
+                    type = "ERROR";
+                    break;
+                case EType.Critical_Error:
+                    type = "CRITICAL_ERROR";
+                    break;
+            }
+            string output = LogConfiguration._LogFormatting;
+            output = output.Replace("$date", date);
+            output = output.Replace("$time", time);
+            output = output.Replace("$type", type);
+            output = output.Replace("$trace", trace);
+            if (logEvent._IsMultiLine)
+            {
+                string s = "[MULTILINE]\r\n";
+                s += "{\r\n";
+                foreach (string item in logEvent._MultiineText)
+                {
+                    s += item + "\r\n";
+                }
+                s += "}\r\n";
+                output = output.Replace("$msg", s);
+            }
+            else
+            {
+                output = output.Replace("$msg", logEvent._Text);
+            }
+            return output + "\r\n";
         }
         public static string EventToString(Event logEvent)
 		{
@@ -190,7 +214,7 @@ namespace SimpleLogs4Net
             {
 				output = output.Replace("$msg",logEvent._Text);
 			}
-            return output;
+            return output + "\r\n";
 		}
 		public static void ClearLogs()
 		{
