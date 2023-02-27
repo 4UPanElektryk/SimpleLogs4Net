@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Runtime.InteropServices.ComTypes;
-using System.Text;
-
-namespace SimpleLogs4Net
+﻿namespace SimpleLogs4Net
 {
     public class LogConfiguration
     {
@@ -32,6 +26,14 @@ namespace SimpleLogs4Net
         public void Initialize(string dir, OutputStream stream)
         {
             new LogConfiguration(dir,stream);
+        }
+        public void ChangeStream(OutputStream stream) 
+        {
+            Initializer.InitStream(stream);
+        }
+        public void ChangeDefaultType(EType type)
+        {
+            _DefaultType = type;
         }
     }
 }
