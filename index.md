@@ -10,3 +10,5 @@
 [Documentation for Version 1.2](https://4upanelektryk.github.io/SimpleLogs4Net/1_2)
 
 [Documentation for Version 2.0](https://4upanelektryk.github.io/SimpleLogs4Net/2_0)
+
+[Documentation for Version 2.0](https://4upanelektryk.github.io/SimpleLogs4Net/3_0)
