@@ -16,7 +16,7 @@ namespace SimpleLogs4Net
 		}
 		public static void DebugMsg(string text, EType type)
 		{
-			Console.WriteLine("[");
+			Console.Write("[");
 			ConsoleColor color;
 			if (type == EType.Normal)
 			{
@@ -42,7 +42,7 @@ namespace SimpleLogs4Net
 			t._Trace = "Debug";
 			if (LogConfiguration._FileOutputEnabled)
 			{
-				AddEvent(t);
+				AddEvent(t,false);
 			}
 			else
 			{
@@ -67,12 +67,16 @@ namespace SimpleLogs4Net
 		{
 			AddEvent(new Event(text, type));
 		}
-		public static void AddEvent(Event logEvent)
+		public static void AddEvent(Event logEvent, bool? console = null)
 		{
+			if (console == null)
+			{
+				console = LogConfiguration._ConsoleOutputEnabled;
+			}
 			if (!LogConfiguration._FileOutputEnabled && !LogConfiguration._ConsoleOutputEnabled)
 				return;
 			#region Console Output
-			if (LogConfiguration._ConsoleOutputEnabled && LogConfiguration._LogFormatting == "[$date-$time][$type]$trace: $msg")
+			if (console == true && LogConfiguration._LogFormatting == "[$date-$time][$type]$trace: $msg")
 			{
 				Console.ResetColor();
 				Console.Write("[");
