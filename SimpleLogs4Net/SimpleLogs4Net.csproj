@@ -8,7 +8,7 @@
     <PackageTags>Logger;Log;SimpleLogger;SimpleLog;Logs;SimpleLogs;</PackageTags>
     <PackageReleaseNotes>Added Console Output Stream</PackageReleaseNotes>
     <NeutralLanguage>en-GB</NeutralLanguage>
-    <Version>3.1</Version>
+    <Version>3.2</Version>
     <PackageProjectUrl>https://4upanelektryk.github.io/SimpleLogs4Net/</PackageProjectUrl>
   </PropertyGroup>
 
