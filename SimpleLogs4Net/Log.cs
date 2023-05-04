@@ -16,10 +16,7 @@ namespace SimpleLogs4Net
 		}
 		public static void DebugMsg(string text, EType type)
 		{
-			int y = Console.CursorTop;
-			Console.WriteLine("[*] "+ text);
-			Console.CursorLeft = 1;
-			Console.CursorTop = y;
+			Console.WriteLine("[");
 			ConsoleColor color;
 			if (type == EType.Normal)
 			{
@@ -39,9 +36,8 @@ namespace SimpleLogs4Net
 			}
 			Console.ForegroundColor = color;
 			Console.Write("*");
-			Console.CursorLeft = 0;
-			Console.CursorTop = y+1;
 			Console.ResetColor();
+			Console.WriteLine("] "+ text);
 			Event t = new Event(text, type);
 			t._Trace = "Debug";
 			if (LogConfiguration._FileOutputEnabled)
