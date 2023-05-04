@@ -5,7 +5,6 @@
         Normal,
         Informtion,
         Warning,
-        Error,
-        Critical_Error
+        Error
     }
 }

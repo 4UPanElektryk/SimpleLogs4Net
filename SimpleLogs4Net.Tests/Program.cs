@@ -6,26 +6,28 @@ namespace SimpleLogs4Net.Tests
 {
 	internal class Program
 	{
-        static void Main(string[] args)
-        {
-            new LogConfiguration("Logs\\",OutputStream.Both,"Log","$time $trace $date $type $msg");
-            Log.ClearLogs();
-            Log.ChangeDefaultType(EType.Normal);
-            Log.Write("Test");
-            Log.Write("Test", EType.Informtion);
-            Log.NextLog();
-            Log.Write("Test", EType.Warning);
-            Log.Write("Test", EType.Error);
-            Log.Write("Test", EType.Critical_Error);
-            string[] d =
-            {
-                "d0",
-                "d1",
-                "d2",
-                "d3"
-            };
-            Log.Write(d,EType.Normal);
-            Console.ReadLine();
-        }
+		static void Main(string[] args)
+		{
+			Log.DebugMsg("info");
+			Log.DebugMsg("ok", EType.Normal);
+			new LogConfiguration("Logs\\",OutputStream.Both,"Log");
+			Log.ClearLogs();
+			LogConfiguration.ChangeDefaultType(EType.Normal);
+			Log.Write("Test");
+			Log.Write("Test", EType.Normal);
+			Log.Write("Test", EType.Informtion);
+			Log.Write("Test", EType.Warning);
+			Log.Write("Test", EType.Error);
+			Log.NextLog();
+			string[] d =
+			{
+				"d0",
+				"d1",
+				"d2",
+				"d3"
+			};
+			Log.Write(d,EType.Normal);
+			Console.ReadLine();
+		}
 	}
 }

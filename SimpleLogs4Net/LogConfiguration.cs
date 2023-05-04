@@ -5,6 +5,7 @@
         internal static string _Dir;
         internal static bool _FileOutputEnabled;
         internal static bool _ConsoleOutputEnabled;
+        internal static bool _DebugOutputEnabled = true;
         internal static string _Prefix;
         internal static string _LogFormatting;
         internal static EType _DefaultType = EType.Normal;
@@ -12,7 +13,7 @@
         {
             Initializer.InitStream(OutputStream.Console);
         }
-        public LogConfiguration(string dir, OutputStream stream, string prefix = "LOG", string logformatting = "[$date-$time][$type]$msg")
+        public LogConfiguration(string dir, OutputStream stream, string prefix = "Log", string logformatting = "[$date-$time][$type]$trace: $msg")
         {
             _Dir = dir;
             _Prefix = prefix;
@@ -23,17 +24,21 @@
                 Initializer.InitDirectory(dir);
             }
         }
-        public void Initialize(string dir, OutputStream stream)
+        public static void Initialize(string dir, OutputStream stream)
         {
-            new LogConfiguration(dir,stream);
+            new LogConfiguration(dir, stream);
         }
-        public void ChangeStream(OutputStream stream) 
+        public static void ChangeStream(OutputStream stream)
         {
             Initializer.InitStream(stream);
         }
-        public void ChangeDefaultType(EType type)
+        public static void ChangeDefaultType(EType type)
         {
             _DefaultType = type;
+        }
+        public static void ChangeDebugOutputEnabled(bool enabled)
+        {
+            _DebugOutputEnabled = enabled;
         }
     }
 }

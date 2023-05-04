@@ -23,28 +23,8 @@ namespace SimpleLogs4Net
         }
         public static void InitStream(OutputStream stream)
         {
-            switch (stream)
-            {
-                case OutputStream.None:
-                    LogConfiguration._FileOutputEnabled = false;
-                    LogConfiguration._ConsoleOutputEnabled = false;
-                    break;
-                case OutputStream.Console:
-                    LogConfiguration._FileOutputEnabled = false;
-                    LogConfiguration._ConsoleOutputEnabled = true;
-                    break;
-                case OutputStream.File:
-                    LogConfiguration._FileOutputEnabled = true;
-                    LogConfiguration._ConsoleOutputEnabled = false;
-                    break;
-                case OutputStream.Both:
-                    LogConfiguration._FileOutputEnabled = true;
-                    LogConfiguration._ConsoleOutputEnabled = true;
-                    break;
-                default:
-                    break;
-            }
+            LogConfiguration._ConsoleOutputEnabled = (int)stream % 2 != 0;
+            LogConfiguration._FileOutputEnabled = (int)stream > 1;
         }
-
     }
 }
