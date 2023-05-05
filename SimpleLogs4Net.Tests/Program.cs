@@ -16,6 +16,7 @@ namespace SimpleLogs4Net.Tests
 			Log.Write("Test");
 			Log.Write("Test", EType.Normal);
 			Log.Write("Test", EType.Informtion);
+			Log.DebugMsg("info");
 			Log.Write("Test", EType.Warning);
 			Log.Write("Test", EType.Error);
 			Log.NextLog();

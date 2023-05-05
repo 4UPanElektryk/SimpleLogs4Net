@@ -42,7 +42,7 @@ namespace SimpleLogs4Net
 			t._Trace = "Debug";
 			if (LogConfiguration._FileOutputEnabled)
 			{
-				AddEvent(t,false);
+				AddEvent(t,true);
 			}
 			else
 			{
@@ -67,16 +67,14 @@ namespace SimpleLogs4Net
 		{
 			AddEvent(new Event(text, type));
 		}
-		public static void AddEvent(Event logEvent, bool? console = null)
+		public static void AddEvent(Event logEvent, bool DisableConsoleOutput = false)
 		{
-			if (console == null)
-			{
-				console = LogConfiguration._ConsoleOutputEnabled;
-			}
 			if (!LogConfiguration._FileOutputEnabled && !LogConfiguration._ConsoleOutputEnabled)
 				return;
 			#region Console Output
-			if (console == true && LogConfiguration._LogFormatting == "[$date-$time][$type]$trace: $msg")
+			if (!DisableConsoleOutput)
+			{
+				if (LogConfiguration._ConsoleOutputEnabled && LogConfiguration._LogFormatting == "[$date-$time][$type]$trace: $msg")
 			{
 				Console.ResetColor();
 				Console.Write("[");
@@ -129,9 +127,10 @@ namespace SimpleLogs4Net
 				}
 				Console.ResetColor();
 			}
-			else if (LogConfiguration._ConsoleOutputEnabled)
+				else if (LogConfiguration._ConsoleOutputEnabled)
 			{
 				Console.Write(EventToString(logEvent));
+			}
 			}
 			#endregion
 			if (!LogConfiguration._FileOutputEnabled)
