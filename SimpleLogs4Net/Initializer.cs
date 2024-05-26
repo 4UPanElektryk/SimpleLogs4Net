@@ -23,8 +23,8 @@ namespace SimpleLogs4Net
         }
         public static void InitStream(OutputStream stream)
         {
-            LogConfiguration._ConsoleOutputEnabled = (int)stream % 2 != 0;
-            LogConfiguration._FileOutputEnabled = (int)stream > 1;
+            LogConfiguration._ConsoleOutputEnabled = stream.HasFlag(OutputStream.Console);
+            LogConfiguration._FileOutputEnabled = stream.HasFlag(OutputStream.File);
         }
     }
 }

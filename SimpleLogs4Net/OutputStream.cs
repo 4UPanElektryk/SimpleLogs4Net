@@ -1,5 +1,7 @@
-﻿namespace SimpleLogs4Net
+﻿using System;
+namespace SimpleLogs4Net
 {
+    [Flags]
     public enum OutputStream
     {
         None = 0,
