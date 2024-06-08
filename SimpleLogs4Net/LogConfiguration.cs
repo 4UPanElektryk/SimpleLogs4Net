@@ -9,6 +9,7 @@
         internal static string _Prefix;
         internal static string _LogFormatting;
         internal static EType _DefaultType = EType.Normal;
+        private static WriterThread t;
         public LogConfiguration()
         {
             Initializer.InitStream(OutputStream.Console);
@@ -23,6 +24,7 @@
             {
                 Initializer.InitDirectory(dir);
             }
+            t = new WriterThread();
         }
         public static void Initialize(string dir, OutputStream stream)
         {

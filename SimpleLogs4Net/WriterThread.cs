@@ -81,11 +81,9 @@ namespace SimpleLogs4Net
         }
         public static void WriteAllInQueue()
         {
-            Event logEvent = _EventQueue.Dequeue();
-            while (logEvent != null)
+            while (_EventQueue.Count > 0)
             {
-                Write(logEvent);
-                logEvent = _EventQueue.Dequeue();
+                Write(_EventQueue.Dequeue());
             };
         }
         private static void Write(Event logEvent)
@@ -99,7 +97,7 @@ namespace SimpleLogs4Net
                 {
                     using (StreamWriter sw = File.AppendText(Log._CurrentFile))
                     {
-                        sw.WriteLine(EventToString(logEvent));
+                        sw.Write(EventToString(logEvent));
                     }
                 }
                 else

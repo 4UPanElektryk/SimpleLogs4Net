@@ -37,9 +37,11 @@ namespace SimpleLogs4Net
 			Console.Write("*");
 			Console.ResetColor();
 			Console.WriteLine("] "+ text);
-			Event t = new Event(text, type);
-			t._Trace = "Debug";
-            if (LogConfiguration._FileOutputEnabled)
+			Event t = new Event(text, type)
+			{
+				_Trace = "Debug"
+			};
+			if (LogConfiguration._FileOutputEnabled)
             {
                 WriterThread.AddEvent(t,true);
 			}
@@ -52,7 +54,9 @@ namespace SimpleLogs4Net
 		}
 		public static void Write(string text, EType type)
 		{
-            WriterThread.AddEvent(new Event(text, type));
+			Event t = new Event(text, type);
+			t._Trace = new StackTrace().GetFrame(1).GetMethod().DeclaringType.Name;
+			WriterThread.AddEvent(t);
 		}
 		#endregion
 		#region File Manipulation

@@ -12,7 +12,6 @@ namespace SimpleLogs4Net
         public EType _Type;
 		public Event(string text, EType type, DateTime dateTime)
 		{
-			_Trace = new StackTrace().GetFrame(1).GetMethod().DeclaringType.Name;
 			_IsMultiLine = false;
             _DateTime = dateTime;
 			_Text = text;
@@ -20,7 +19,6 @@ namespace SimpleLogs4Net
 		}
 		public Event(string text, EType type)
 		{
-			_Trace = new StackTrace().GetFrame(1).GetMethod().DeclaringType.Name;
 			_IsMultiLine = false;
 			_DateTime = DateTime.UtcNow;
 			_Text = text;

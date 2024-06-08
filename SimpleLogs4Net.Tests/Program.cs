@@ -1,6 +1,7 @@
 ﻿using System;
 using SimpleLogs4Net;
 using System.Threading;
+using System.Linq;
 
 namespace SimpleLogs4Net.Tests
 {
@@ -11,7 +12,6 @@ namespace SimpleLogs4Net.Tests
 			Log.DebugMsg("info");
 			Log.DebugMsg("ok", EType.Normal);
 			new LogConfiguration("Logs\\",OutputStream.Both,"Log");
-			Log.ClearLogs();
 			LogConfiguration.ChangeDefaultType(EType.Normal);
 			Log.Write("Test");
 			Log.Write("Test", EType.Normal);
@@ -27,7 +27,7 @@ namespace SimpleLogs4Net.Tests
 				"d2",
 				"d3"
 			};
-			Log.Write(d,EType.Normal);
+			Log.Write(string.Join(" ",d),EType.Normal);
 			Console.ReadLine();
 		}
 	}
