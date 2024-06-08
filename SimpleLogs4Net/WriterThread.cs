@@ -7,11 +7,14 @@ namespace SimpleLogs4Net
 {
     internal class WriterThread
     {
-        private static Queue<Event> _EventQueue = new Queue<Event>();
+		private static Queue<Event> _PreConfigQueue = new Queue<Event>();
+		private static Queue<Event> _EventQueue = new Queue<Event>();
+        private static bool _initialised = false; 
         public WriterThread()
         {
             Thread t = new Thread(() => Loop());
             t.Start();
+            _initialised = true;
         }
         private static void Loop()
         {
@@ -30,6 +33,12 @@ namespace SimpleLogs4Net
         }
         public static void AddEvent(Event logEvent, bool skipConsole = false)
         {
+            if (!_initialised)
+            {
+                _PreConfigQueue.Enqueue(logEvent);
+                return;
+            }
+            while(_PreConfigQueue.Count > 0) { _EventQueue.Enqueue(_PreConfigQueue.Dequeue()); }
             _EventQueue.Enqueue(logEvent);
             if (skipConsole){ return; }
             #region Console Output
