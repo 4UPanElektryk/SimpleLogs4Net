@@ -10,6 +10,7 @@ namespace SimpleLogs4Net
 		private static Queue<Event> _PreConfigQueue = new Queue<Event>();
 		private static Queue<Event> _EventQueue = new Queue<Event>();
         private static bool _initialised = false; 
+        private static bool _ready = false;
         public WriterThread()
         {
             Thread t = new Thread(() => Loop());
@@ -22,7 +23,10 @@ namespace SimpleLogs4Net
             {
                 Stopwatch sw = new Stopwatch();
                 sw.Start();
-                WriteAllInQueue();
+                if (_ready)
+                {
+                    WriteAllInQueue();
+                }
                 sw.Stop();
                 int dur = (int)(1000 - sw.ElapsedMilliseconds);
                 if (dur > 0)
@@ -33,6 +37,7 @@ namespace SimpleLogs4Net
         }
         public static void AddEvent(Event logEvent, bool skipConsole = false)
         {
+            _ready = false;
             if (!_initialised)
             {
                 _PreConfigQueue.Enqueue(logEvent);
@@ -40,6 +45,7 @@ namespace SimpleLogs4Net
             }
             while(_PreConfigQueue.Count > 0) { _EventQueue.Enqueue(_PreConfigQueue.Dequeue()); }
             _EventQueue.Enqueue(logEvent);
+            _ready = true;
             if (skipConsole){ return; }
             #region Console Output
             if (LogConfiguration._ConsoleOutputEnabled && LogConfiguration._LogFormatting == "[$date-$time][$type]$trace: $msg")
@@ -92,7 +98,17 @@ namespace SimpleLogs4Net
         {
             while (_EventQueue.Count > 0)
             {
-                Write(_EventQueue.Dequeue());
+                Event l;
+				try
+                {
+                    l = _EventQueue.Dequeue();
+                }
+                catch { l = null; }
+                if (l == null)
+                {
+                    break;
+                }
+                Write(l);
             };
         }
         private static void Write(Event logEvent)
